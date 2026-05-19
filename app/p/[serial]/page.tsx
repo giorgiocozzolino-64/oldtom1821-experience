@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { notFound } from "next/navigation"
 import { getBottle, bottles } from "../../lib/bottles"
 
@@ -15,92 +16,126 @@ export default async function BottlePage({
   const { serial } = await params
   const bottle = getBottle(serial)
 
-  if (!bottle) {
-    notFound()
-  }
+  if (!bottle) notFound()
 
   return (
-    <main className="min-h-screen bg-black text-[#D4A437] flex items-center justify-center px-5 py-10">
-      <section className="fade-in luxury-panel luxury-border w-full max-w-4xl p-6 md:p-12 text-center">
+    <main className="min-h-screen bg-black text-[#D4A437] px-6 py-12">
+      <section className="max-w-5xl mx-auto border border-[#D4A437]/40 p-8 md:p-14 bg-black">
 
-        <p className="tracking-[0.45em] text-xs md:text-sm text-[#D4A437]/70 mb-4">
-          FIFE CHAMBER AWARD 2026
-        </p>
+        <div className="text-center space-y-8">
+          <p className="tracking-[0.45em] text-sm text-[#D4A437]/70">
+            FIFE CHAMBER AWARD 2026
+          </p>
 
-        <h1 className="gold-glow text-3xl md:text-6xl font-serif leading-tight mb-3">
-          INNOVATION & DIGITALISATION
-        </h1>
+          <h1 className="text-5xl md:text-7xl leading-none font-serif drop-shadow-[0_0_18px_rgba(212,164,55,0.25)]">
+            INNOVATION & DIGITALISATION
+          </h1>
 
-        <div className="w-32 h-[1px] bg-[#D4A437]/70 mx-auto my-8" />
+          <div className="w-40 h-px bg-[#D4A437]/40 mx-auto" />
 
-        <p className="tracking-[0.35em] text-xs md:text-sm text-[#D4A437]/70 mb-4">
-          YOU HAVE UNLOCKED
-        </p>
+          <p className="tracking-[0.35em] text-sm text-[#D4A437]/70">
+            YOU HAVE UNLOCKED
+          </p>
 
-        <h2 className="gold-glow text-3xl md:text-5xl font-serif mb-8">
-          {bottle.product}
-        </h2>
+          <h2 className="text-4xl md:text-6xl font-serif">
+            {bottle.product}
+          </h2>
 
-        <p className="text-3xl md:text-5xl font-bold tracking-wide mb-2">
-          BOTTLE {bottle.bottleNumber}
-        </p>
-
-        <p className="tracking-[0.28em] text-xs md:text-sm text-[#D4A437]/60 mb-10">
-          {bottle.serial}
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-4 text-left my-10">
-          <div className="border border-[#D4A437]/30 p-5">
-            <p className="text-sm text-[#D4A437]/50 mb-2">CASK ENTRY</p>
-            <p className="text-xl">{bottle.agingStart}</p>
-          </div>
-
-          <div className="border border-[#D4A437]/30 p-5">
-            <p className="text-sm text-[#D4A437]/50 mb-2">MATURATION</p>
-            <p className="text-xl">{bottle.agingEnd}</p>
-          </div>
-
-          <div className="border border-[#D4A437]/30 p-5">
-            <p className="text-sm text-[#D4A437]/50 mb-2">RELEASE</p>
-            <p className="text-xl">{bottle.releaseDate}</p>
-          </div>
-        </div>
-
-        <section className="border border-[#D4A437]/30 p-6 md:p-8 text-left">
-          <h3 className="gold-glow text-3xl font-serif mb-6">
-            Provenance Journey
+          <h3 className="text-5xl md:text-6xl font-serif font-bold">
+            BOTTLE {bottle.bottleNumber}
           </h3>
 
-          <div className="space-y-6 text-[#D4A437]/80 leading-relaxed">
-            <p>
-              This limited edition bottle belongs to a fully serialized
-              collector release created for the Fife Chamber Awards reception.
-            </p>
+          <p className="tracking-[0.25em] text-[#D4A437]/80">
+            {bottle.serial}
+          </p>
+        </div>
 
-            <p>
-              The liquid inside is an ex-bourbon cask aged Negroni connected to
-              the Old Tom Gin 1821 family in St Andrews.
+        <section className="grid md:grid-cols-3 gap-4 mt-14">
+          <div className="border border-[#D4A437]/30 p-6">
+            <p className="text-xs tracking-[0.2em] text-[#D4A437]/60 uppercase mb-3">
+              Cask Entry
             </p>
+            <p className="text-3xl font-serif">{bottle.agingStart}</p>
+          </div>
 
-            <p>
-              Each QR code unlocks a unique digital passport, authenticating the
-              bottle number, release context, and provenance story through the
-              E.L.Y.A.S.-A.I. verification layer.
+          <div className="border border-[#D4A437]/30 p-6">
+            <p className="text-xs tracking-[0.2em] text-[#D4A437]/60 uppercase mb-3">
+              Maturation
             </p>
+            <p className="text-3xl font-serif">{bottle.agingEnd}</p>
+          </div>
+
+          <div className="border border-[#D4A437]/30 p-6">
+            <p className="text-xs tracking-[0.2em] text-[#D4A437]/60 uppercase mb-3">
+              Release
+            </p>
+            <p className="text-3xl font-serif">{bottle.releaseDate}</p>
           </div>
         </section>
 
-        <section className="mt-10 border border-[#D4A437]/30 p-6 text-center">
-          <p className="gold-glow text-3xl md:text-4xl font-serif mb-4">
-            E.L.Y.A.S.-A.I. ® VERIFIED
-          </p>
+        <section className="border border-[#D4A437]/30 mt-10 overflow-hidden">
+          <div className="relative w-full h-[520px]">
+            <Image
+              src="/negroni-dark.jpeg"
+              alt="Luxury Negroni cocktail"
+              fill
+              priority
+              className="object-cover opacity-80"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+          </div>
+
+          <div className="p-8 md:p-12 bg-black">
+            <h2 className="text-4xl md:text-5xl mb-8 font-serif">
+              The Story of the Negroni
+            </h2>
+
+            <div className="space-y-6 text-[#D4A437]/80 leading-loose text-lg">
+              <p>
+                Born in Florence in 1919, the Negroni stands among Italy’s most
+                iconic cocktails.
+              </p>
+
+              <p>
+                According to the most widely accepted story, Count Camillo
+                Negroni entered the legendary Caffè Casoni on Via de’ Tornabuoni
+                and asked bartender Fosco Scarselli to strengthen his favorite
+                Americano by replacing soda water with gin.
+              </p>
+
+              <p>
+                To distinguish the new creation, the bartender finished the
+                drink with an orange peel instead of the traditional lemon
+                garnish.
+              </p>
+
+              <p>
+                The result was extraordinary — bold yet refined, bitter yet
+                perfectly balanced.
+              </p>
+
+              <p>
+                Patrons soon began requesting “the Count’s drink,” and the
+                Negroni quickly became a symbol of Italian sophistication and
+                aperitivo culture.
+              </p>
+
+              <p>
+                More than a century later, the Negroni remains timeless: a ritual
+                of elegance, craftsmanship, and character, celebrated worldwide
+                for the harmonious union of gin, vermouth, and bitter.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="text-center mt-14 space-y-6">
+          <div className="w-40 h-px bg-[#D4A437]/40 mx-auto" />
 
           <p className="max-w-2xl mx-auto text-[#D4A437]/70 leading-relaxed">
             A live demonstration of digital authentication, serialized
             provenance and anti-counterfeit storytelling for luxury spirits.
           </p>
-
-          <div className="w-40 h-[1px] bg-[#D4A437]/60 mx-auto my-8" />
 
           <p className="tracking-[0.35em] text-xs text-[#D4A437]/50">
             OLD TOM GIN 1821 — ST ANDREWS
