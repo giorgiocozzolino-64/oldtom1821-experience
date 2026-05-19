@@ -1,4 +1,4 @@
-import AcceptTransferForm from "../../../components/AcceptTransferForm"
+import AcceptTransferForm from "@/components/AcceptTransferForm"
 
 export default async function TransferPage({
   params,
