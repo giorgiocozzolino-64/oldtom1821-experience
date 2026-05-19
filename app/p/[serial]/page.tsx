@@ -3,7 +3,8 @@ import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 
 import { getBottle, bottles } from "@/app/lib/bottles"
-import ClaimForm from "../../../components/ClaimForm"
+import ClaimForm from "@/components/ClaimForm"
+import TransferOwnershipForm from "@/components/TransferOwnershipForm"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,6 +33,12 @@ export default async function BottlePage({
     .eq("serial", serial)
     .order("created_at", { ascending: true })
 
+  const { data: currentClaim } = await supabase
+    .from("elyas_bottle_claims")
+    .select("*")
+    .eq("serial", serial)
+    .maybeSingle()
+
   return (
     <main className="min-h-screen bg-black text-[#D4A437] px-6 py-10 md:px-10">
       <div className="max-w-5xl mx-auto border border-[#D4A437]/40 p-8 md:p-14 bg-black">
@@ -40,7 +47,7 @@ export default async function BottlePage({
             FIFE CHAMBER AWARD 2026
           </p>
 
-          <h1 className="text-6xl md:text-8xl leading-none font-serif text-[#D4A437] drop-shadow-[0_0_18px_rgba(212,164,55,0.25)]">
+          <h1 className="text-6xl md:text-8xl leading-none font-serif text-[#D4A437]">
             INNOVATION & <br />
             DIGITALISATION
           </h1>
@@ -185,6 +192,13 @@ export default async function BottlePage({
         </section>
 
         <ClaimForm serial={bottle.serial} />
+
+        {currentClaim && (
+          <TransferOwnershipForm
+            serial={bottle.serial}
+            ownerEmail={currentClaim.email}
+          />
+        )}
       </div>
     </main>
   )
