@@ -2,7 +2,7 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 
 import { getBottle, bottles } from "@/app/lib/bottles"
-import ClaimForm from "@/components/ClaimForm"
+import ClaimForm from "../../../components/ClaimForm"
 
 export async function generateStaticParams() {
   return bottles.map((bottle) => ({
