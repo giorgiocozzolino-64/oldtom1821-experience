@@ -1,148 +1,90 @@
-import Image from "next/image"
-import { notFound } from "next/navigation"
-import { getBottle, bottles } from "../../lib/bottles"
-
-export function generateStaticParams() {
-  return bottles.map((bottle) => ({
-    serial: bottle.serial,
-  }))
-}
-
-export default async function BottlePage({
-  params,
-}: {
-  params: Promise<{ serial: string }>
-}) {
-  const { serial } = await params
-  const bottle = getBottle(serial)
-
-  if (!bottle) notFound()
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-black text-[#D4A437] px-6 py-12">
-      <section className="max-w-5xl mx-auto border border-[#D4A437]/40 p-8 md:p-14 bg-black">
+    <main className="min-h-screen bg-black text-[#D4A437] flex items-center justify-center px-6">
+      <div className="max-w-5xl w-full text-center py-24">
 
-        <div className="text-center space-y-8">
-          <p className="tracking-[0.45em] text-sm text-[#D4A437]/70">
-            FIFE CHAMBER AWARD 2026
-          </p>
+        <p className="tracking-[0.45em] text-sm text-[#D4A437]/70 mb-8">
+          OLD TOM GIN 1821 — ST ANDREWS
+        </p>
 
-          <h1 className="text-5xl md:text-7xl leading-none font-serif drop-shadow-[0_0_18px_rgba(212,164,55,0.25)]">
-            INNOVATION & DIGITALISATION
-          </h1>
+        <h1 className="text-6xl md:text-8xl leading-none font-serif text-[#D4A437] drop-shadow-[0_0_18px_rgba(212,164,55,0.35)]">
+          DIGITAL <br />
+          PROVENANCE
+        </h1>
 
-          <div className="w-40 h-px bg-[#D4A437]/40 mx-auto" />
+        <div className="w-32 h-px bg-[#D4A437]/40 mx-auto my-10" />
 
-          <p className="tracking-[0.35em] text-sm text-[#D4A437]/70">
-            YOU HAVE UNLOCKED
-          </p>
+        <p className="max-w-3xl mx-auto text-xl md:text-2xl leading-relaxed text-[#D4A437]/80">
+          A luxury authentication and storytelling platform for serialized
+          collector spirits, rare cask releases and authenticated ownership
+          experiences.
+        </p>
 
-          <h2 className="text-4xl md:text-6xl font-serif">
-            {bottle.product}
-          </h2>
+        <div className="flex flex-col md:flex-row gap-6 justify-center mt-16">
+          <a
+            href="/p/FCA26-LE-001"
+            className="border border-[#D4A437]/40 px-10 py-5 tracking-[0.3em] text-sm hover:bg-[#D4A437] hover:text-black transition-all duration-300"
+          >
+            ENTER EXPERIENCE
+          </a>
 
-          <h3 className="text-5xl md:text-6xl font-serif font-bold">
-            BOTTLE {bottle.bottleNumber}
-          </h3>
-
-          <p className="tracking-[0.25em] text-[#D4A437]/80">
-            {bottle.serial}
-          </p>
+          <a
+            href="https://oldtomgin1821.com"
+            target="_blank"
+            className="border border-[#D4A437]/20 px-10 py-5 tracking-[0.3em] text-sm hover:border-[#D4A437]/60 transition-all duration-300"
+          >
+            OFFICIAL WEBSITE
+          </a>
         </div>
 
-        <section className="grid md:grid-cols-3 gap-4 mt-14">
-          <div className="border border-[#D4A437]/30 p-6">
-            <p className="text-xs tracking-[0.2em] text-[#D4A437]/60 uppercase mb-3">
-              Cask Entry
+        <div className="grid md:grid-cols-3 gap-6 mt-24 text-left">
+          <div className="border border-[#D4A437]/20 p-10 bg-[#0A0A0A]">
+            <p className="tracking-[0.3em] text-xs text-[#D4A437]/60 mb-5">
+              AUTHENTICATION
             </p>
-            <p className="text-3xl font-serif">{bottle.agingStart}</p>
-          </div>
 
-          <div className="border border-[#D4A437]/30 p-6">
-            <p className="text-xs tracking-[0.2em] text-[#D4A437]/60 uppercase mb-3">
-              Maturation
+            <h3 className="text-4xl font-serif mb-6">
+              Serialized Identity
+            </h3>
+
+            <p className="text-[#D4A437]/70 leading-loose">
+              Every bottle receives a unique provenance identity connected to
+              release history and ownership records.
             </p>
-            <p className="text-3xl font-serif">{bottle.agingEnd}</p>
           </div>
 
-          <div className="border border-[#D4A437]/30 p-6">
-            <p className="text-xs tracking-[0.2em] text-[#D4A437]/60 uppercase mb-3">
-              Release
+          <div className="border border-[#D4A437]/20 p-10 bg-[#0A0A0A]">
+            <p className="tracking-[0.3em] text-xs text-[#D4A437]/60 mb-5">
+              STORYTELLING
             </p>
-            <p className="text-3xl font-serif">{bottle.releaseDate}</p>
-          </div>
-        </section>
 
-        <section className="border border-[#D4A437]/30 mt-10 overflow-hidden">
-          <div className="relative w-full h-[520px]">
-            <Image
-              src="/negroni-dark.jpeg"
-              alt="Luxury Negroni cocktail"
-              fill
-              priority
-              className="object-cover opacity-80"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+            <h3 className="text-4xl font-serif mb-6">
+              Cask Journey
+            </h3>
+
+            <p className="text-[#D4A437]/70 leading-loose">
+              Production stages, aging periods and release events become part
+              of an immersive collector narrative.
+            </p>
           </div>
 
-          <div className="p-8 md:p-12 bg-black">
-            <h2 className="text-4xl md:text-5xl mb-8 font-serif">
-              The Story of the Negroni
-            </h2>
+          <div className="border border-[#D4A437]/20 p-10 bg-[#0A0A0A]">
+            <p className="tracking-[0.3em] text-xs text-[#D4A437]/60 mb-5">
+              COLLECTORS
+            </p>
 
-            <div className="space-y-6 text-[#D4A437]/80 leading-loose text-lg">
-              <p>
-                Born in Florence in 1919, the Negroni stands among Italy’s most
-                iconic cocktails.
-              </p>
+            <h3 className="text-4xl font-serif mb-6">
+              Ownership Experience
+            </h3>
 
-              <p>
-                According to the most widely accepted story, Count Camillo
-                Negroni entered the legendary Caffè Casoni on Via de’ Tornabuoni
-                and asked bartender Fosco Scarselli to strengthen his favorite
-                Americano by replacing soda water with gin.
-              </p>
-
-              <p>
-                To distinguish the new creation, the bartender finished the
-                drink with an orange peel instead of the traditional lemon
-                garnish.
-              </p>
-
-              <p>
-                The result was extraordinary — bold yet refined, bitter yet
-                perfectly balanced.
-              </p>
-
-              <p>
-                Patrons soon began requesting “the Count’s drink,” and the
-                Negroni quickly became a symbol of Italian sophistication and
-                aperitivo culture.
-              </p>
-
-              <p>
-                More than a century later, the Negroni remains timeless: a ritual
-                of elegance, craftsmanship, and character, celebrated worldwide
-                for the harmonious union of gin, vermouth, and bitter.
-              </p>
-            </div>
+            <p className="text-[#D4A437]/70 leading-loose">
+              Designed for premium distilleries, luxury releases and
+              authenticated limited-edition spirits.
+            </p>
           </div>
-        </section>
+        </div>
 
-        <section className="text-center mt-14 space-y-6">
-          <div className="w-40 h-px bg-[#D4A437]/40 mx-auto" />
-
-          <p className="max-w-2xl mx-auto text-[#D4A437]/70 leading-relaxed">
-            A live demonstration of digital authentication, serialized
-            provenance and anti-counterfeit storytelling for luxury spirits.
-          </p>
-
-          <p className="tracking-[0.35em] text-xs text-[#D4A437]/50">
-            OLD TOM GIN 1821 — ST ANDREWS
-          </p>
-        </section>
-
-      </section>
+      </div>
     </main>
   )
 }
