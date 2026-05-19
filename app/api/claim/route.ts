@@ -9,6 +9,7 @@ const supabase = createClient(
 export async function POST(req: Request) {
   try {
     const body = await req.json()
+
     const { serial, name, email, company, marketingConsent } = body
 
     if (!serial || !name || !email) {
@@ -31,18 +32,41 @@ export async function POST(req: Request) {
       )
     }
 
-    const { error } = await supabase.from("elyas_bottle_claims").insert({
-      serial,
-      name,
-      email,
-      company: company || null,
-      marketing_consent: marketingConsent === true,
-    })
+    const { error: claimError } = await supabase
+      .from("elyas_bottle_claims")
+      .insert({
+        serial,
+        name,
+        email,
+        company: company || null,
+        marketing_consent: marketingConsent === true,
+      })
 
-    if (error) {
+    if (claimError) {
       return NextResponse.json(
         { success: false, error: "Unable to claim this bottle." },
         { status: 400 }
+      )
+    }
+
+    const { error: historyError } = await supabase
+      .from("ownership_history")
+      .insert({
+        serial,
+        from_owner: null,
+        to_owner: name,
+        to_email: email,
+        to_company: company || null,
+        transfer_type: "genesis_claim",
+      })
+
+    if (historyError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Bottle claimed, but provenance history could not be created.",
+        },
+        { status: 500 }
       )
     }
 
