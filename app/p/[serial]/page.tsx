@@ -122,15 +122,21 @@ export default async function BottlePage({
           </div>
         </section>
 
-        {/* AUTH */}
+        {/* DIGITAL AUTH */}
 
         <section className="mt-14 border border-[#D4A437]/30 p-10 text-center">
           <p className="tracking-[0.3em] text-sm text-[#D4A437]/70">
             DIGITAL AUTHENTICATION
           </p>
 
-          <div className="w-56 h-56 border border-[#D4A437]/20 mx-auto mt-8 flex items-center justify-center text-[#D4A437]/50 tracking-[0.2em] text-sm">
-            QR PLACEHOLDER
+          <div className="flex justify-center mt-8">
+            <Image
+              src={`/qr/${bottle.serial}.png`}
+              alt={`QR ${bottle.serial}`}
+              width={220}
+              height={220}
+              className="border border-[#D4A437]/20 p-2 bg-black"
+            />
           </div>
 
           <p className="mt-6 text-[#D4A437]/60 tracking-[0.2em] text-sm">
