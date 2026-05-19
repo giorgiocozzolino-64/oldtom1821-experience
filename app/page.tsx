@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { notFound } from "next/navigation"
 import { getBottle, bottles } from "../../lib/bottles"
 
@@ -110,6 +111,12 @@ export default async function BottlePage({
             </p>
 
             <div className="w-24 h-px bg-[#D4A437]/40" />
+            <Image
+  src="/negroni-dark.jpeg"
+  alt="Luxury Negroni"
+  fill
+  className="object-cover opacity-80"
+/>
 
             <div className="space-y-6">
 
