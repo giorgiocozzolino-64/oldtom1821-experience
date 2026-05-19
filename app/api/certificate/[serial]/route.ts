@@ -37,6 +37,7 @@ export async function GET(
   }
 
   const pdfDoc = await PDFDocument.create()
+
   const page = pdfDoc.addPage([842, 595])
 
   const serif = await pdfDoc.embedFont(StandardFonts.TimesRoman)
@@ -79,13 +80,16 @@ export async function GET(
     color: gold,
   })
 
-  page.drawText("This certifies that the serialized bottle below has been claimed by:", {
-    x: 205,
-    y: 395,
-    size: 14,
-    font: sans,
-    color: gold,
-  })
+  page.drawText(
+    "This certifies that the serialized bottle below has been claimed by:",
+    {
+      x: 205,
+      y: 395,
+      size: 14,
+      font: sans,
+      color: gold,
+    }
+  )
 
   page.drawText(claim.name, {
     x: 205,
@@ -145,25 +149,31 @@ export async function GET(
     color: gold,
   })
 
-  page.drawText(`Claimed At: ${new Date(claim.claimed_at).toLocaleString("en-GB")}`, {
-    x: 205,
-    y: 125,
-    size: 12,
-    font: sans,
-    color: gold,
-  })
+  page.drawText(
+    `Claimed At: ${new Date(claim.claimed_at).toLocaleString("en-GB")}`,
+    {
+      x: 205,
+      y: 125,
+      size: 12,
+      font: sans,
+      color: gold,
+    }
+  )
 
-  page.drawText("Digitally issued by E.L.Y.A.S.-A.I. Serialized Passport System", {
-    x: 230,
-    y: 70,
-    size: 11,
-    font: sans,
-    color: gold,
-  })
+  page.drawText(
+    "Digitally issued by E.L.Y.A.S.-A.I. Serialized Passport System",
+    {
+      x: 230,
+      y: 70,
+      size: 11,
+      font: sans,
+      color: gold,
+    }
+  )
 
   const pdfBytes = await pdfDoc.save()
 
-  return new NextResponse(pdfBytes, {
+  return new NextResponse(Buffer.from(pdfBytes), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${serial}-ownership-certificate.pdf"`,
