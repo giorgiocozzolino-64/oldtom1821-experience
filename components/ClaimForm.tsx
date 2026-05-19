@@ -6,6 +6,7 @@ export default function ClaimForm({ serial }: { serial: string }) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
+  const certificateUrl = `/api/certificate/${serial}`
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -28,8 +29,10 @@ export default function ClaimForm({ serial }: { serial: string }) {
       }),
     })
 
+    const data = await response.json()
+
     if (!response.ok) {
-      setError("Unable to claim this bottle.")
+      setError(data.error || "Unable to claim this bottle.")
       setLoading(false)
       return
     }
@@ -44,9 +47,17 @@ export default function ClaimForm({ serial }: { serial: string }) {
         <h2 className="text-4xl font-serif text-[#D4A437]">
           Ownership Claimed
         </h2>
+
         <p className="mt-4 text-[#D4A437]/70">
           Your bottle has been registered successfully.
         </p>
+
+        <a
+          href={certificateUrl}
+          className="inline-block mt-8 border border-[#D4A437]/50 px-8 py-4 tracking-[0.25em] text-sm text-[#D4A437] hover:bg-[#D4A437] hover:text-black transition"
+        >
+          DOWNLOAD CERTIFICATE PDF
+        </a>
       </section>
     )
   }
@@ -62,20 +73,54 @@ export default function ClaimForm({ serial }: { serial: string }) {
       </h2>
 
       <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-5">
-        <input name="name" required placeholder="Name" className="w-full bg-black border border-[#D4A437]/30 p-4 text-[#D4A437] placeholder:text-[#D4A437]/40" />
-        <input name="email" required type="email" placeholder="Email" className="w-full bg-black border border-[#D4A437]/30 p-4 text-[#D4A437] placeholder:text-[#D4A437]/40" />
-        <input name="company" placeholder="Company optional" className="w-full bg-black border border-[#D4A437]/30 p-4 text-[#D4A437] placeholder:text-[#D4A437]/40" />
+        <input
+          name="name"
+          required
+          placeholder="Name"
+          className="w-full bg-black border border-[#D4A437]/30 p-4 text-[#D4A437] placeholder:text-[#D4A437]/40"
+        />
+
+        <input
+          name="email"
+          required
+          type="email"
+          placeholder="Email"
+          className="w-full bg-black border border-[#D4A437]/30 p-4 text-[#D4A437] placeholder:text-[#D4A437]/40"
+        />
+
+        <input
+          name="company"
+          placeholder="Company optional"
+          className="w-full bg-black border border-[#D4A437]/30 p-4 text-[#D4A437] placeholder:text-[#D4A437]/40"
+        />
 
         <label className="flex gap-3 text-sm text-[#D4A437]/70">
           <input type="checkbox" name="marketingConsent" />
           I agree to receive collector updates and future releases.
         </label>
 
-        <button disabled={loading} className="w-full border border-[#D4A437]/50 py-4 tracking-[0.25em] text-[#D4A437] hover:bg-[#D4A437] hover:text-black transition">
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full border border-[#D4A437]/50 py-4 tracking-[0.25em] text-[#D4A437] hover:bg-[#D4A437] hover:text-black transition"
+        >
           {loading ? "CLAIMING..." : "CLAIM OWNERSHIP"}
         </button>
 
-        {error && <p className="text-red-400 text-center">{error}</p>}
+        {error && (
+          <div className="text-center">
+            <p className="text-red-400">{error}</p>
+
+            {error.includes("already") && (
+              <a
+                href={certificateUrl}
+                className="inline-block mt-6 border border-[#D4A437]/50 px-6 py-3 tracking-[0.2em] text-xs text-[#D4A437] hover:bg-[#D4A437] hover:text-black transition"
+              >
+                DOWNLOAD EXISTING CERTIFICATE
+              </a>
+            )}
+          </div>
+        )}
       </form>
     </section>
   )

@@ -9,13 +9,25 @@ const supabase = createClient(
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-
     const { serial, name, email, company, marketingConsent } = body
 
     if (!serial || !name || !email) {
       return NextResponse.json(
-        { success: false, error: "Missing required fields" },
+        { success: false, error: "Missing required fields." },
         { status: 400 }
+      )
+    }
+
+    const { data: existingClaim } = await supabase
+      .from("elyas_bottle_claims")
+      .select("serial")
+      .eq("serial", serial)
+      .maybeSingle()
+
+    if (existingClaim) {
+      return NextResponse.json(
+        { success: false, error: "This bottle has already been claimed." },
+        { status: 409 }
       )
     }
 
@@ -29,15 +41,18 @@ export async function POST(req: Request) {
 
     if (error) {
       return NextResponse.json(
-        { success: false, error: error.message },
+        { success: false, error: "Unable to claim this bottle." },
         { status: 400 }
       )
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      certificateUrl: `/api/certificate/${serial}`,
+    })
   } catch {
     return NextResponse.json(
-      { success: false, error: "Server error" },
+      { success: false, error: "Server error." },
       { status: 500 }
     )
   }
