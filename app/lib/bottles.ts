@@ -4,7 +4,7 @@ export const bottles = Array.from({ length: 60 }, (_, i) => {
 
   return {
     serial,
-    bottleNumber: `${String(n).padStart(2, "0")} OF 60`,
+   BOTTLE {bottle.bottleNumber}
     edition: "Fife Chamber Award 2026 Limited Edition",
     product: "Ex-Bourbon Cask Aged Negroni",
     brand: "Old Tom Gin 1821 — St Andrews",
