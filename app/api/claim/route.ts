@@ -9,7 +9,6 @@ const supabase = createClient(
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-
     const { serial, name, email, company, marketingConsent } = body
 
     if (!serial || !name || !email) {
@@ -49,26 +48,37 @@ export async function POST(req: Request) {
       )
     }
 
-    const { error: historyError } = await supabase
-      .from("ownership_history")
-      .insert({
-        serial,
-        from_owner: null,
-        to_owner: name,
-        to_email: email,
-        to_company: company || null,
-        transfer_type: "genesis_claim",
-      })
+    await supabase.from("ownership_history").insert({
+      serial,
+      from_owner: null,
+      to_owner: name,
+      to_email: email,
+      to_company: company || null,
+      transfer_type: "genesis_claim",
+    })
 
-    if (historyError) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Bottle claimed, but provenance history could not be created.",
-        },
-        { status: 500 }
-      )
-    }
+    await supabase.from("custody_transfers").insert([
+      {
+        serial,
+        from_party: "Old Tom Gin 1821",
+        from_role: "producer",
+        to_party: "Fife Chamber Awards Reception",
+        to_role: "event",
+        to_email: null,
+        transfer_type: "production_release",
+        notes: "Limited edition released for the Fife Chamber Awards reception.",
+      },
+      {
+        serial,
+        from_party: "Fife Chamber Awards Reception",
+        from_role: "event",
+        to_party: name,
+        to_role: "final_consumer",
+        to_email: email,
+        transfer_type: "ownership_claim",
+        notes: "Bottle claimed by event guest / collector.",
+      },
+    ])
 
     return NextResponse.json({
       success: true,
