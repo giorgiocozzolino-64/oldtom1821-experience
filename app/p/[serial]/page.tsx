@@ -1,8 +1,14 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import { createClient } from "@supabase/supabase-js"
 
 import { getBottle, bottles } from "@/app/lib/bottles"
 import ClaimForm from "../../../components/ClaimForm"
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function generateStaticParams() {
   return bottles.map((bottle) => ({
@@ -19,6 +25,12 @@ export default async function BottlePage({
   const bottle = getBottle(serial)
 
   if (!bottle) notFound()
+
+  const { data: custodyHistory } = await supabase
+    .from("custody_transfers")
+    .select("*")
+    .eq("serial", serial)
+    .order("created_at", { ascending: true })
 
   return (
     <main className="min-h-screen bg-black text-[#D4A437] px-6 py-10 md:px-10">
@@ -43,7 +55,7 @@ export default async function BottlePage({
             {bottle.product}
           </h2>
 
-          <h3 className="mt-10 text-5xl md:text-7xl font-bold tracking-tight text-[#D4A437]">
+          <h3 className="mt-10 text-5xl md:text-7xl font-bold tracking-tight">
             BOTTLE {bottle.bottleNumber}
           </h3>
 
@@ -121,6 +133,55 @@ export default async function BottlePage({
           <p className="mt-6 text-[#D4A437]/60 tracking-[0.2em] text-sm">
             SCAN TO VERIFY SERIALIZED PASSPORT
           </p>
+        </section>
+
+        <section className="mt-14 border border-[#D4A437]/30 p-10">
+          <p className="tracking-[0.3em] text-sm text-[#D4A437]/70 text-center mb-10">
+            PROVENANCE TIMELINE
+          </p>
+
+          <div className="space-y-8 max-w-2xl mx-auto">
+            <div>
+              <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
+                30 SEPTEMBER 2022
+              </p>
+              <p className="text-2xl font-serif mt-2">Cask Filled</p>
+            </div>
+
+            <div>
+              <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
+                30 JANUARY 2026
+              </p>
+              <p className="text-2xl font-serif mt-2">Maturation Completed</p>
+            </div>
+
+            <div>
+              <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
+                21 MAY 2026
+              </p>
+              <p className="text-2xl font-serif mt-2">
+                Released for Fife Chamber Awards
+              </p>
+            </div>
+
+            {custodyHistory?.map((event) => (
+              <div key={event.id}>
+                <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
+                  {new Date(event.created_at).toLocaleString("en-GB")}
+                </p>
+
+                <p className="text-2xl font-serif mt-2">
+                  {event.transfer_type === "ownership_claim"
+                    ? `Claimed by ${event.to_party}`
+                    : `Transferred from ${event.from_party} to ${event.to_party}`}
+                </p>
+
+                <p className="text-[#D4A437]/60 mt-1">
+                  {event.from_role} → {event.to_role}
+                </p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <ClaimForm serial={bottle.serial} />
