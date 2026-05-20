@@ -58,10 +58,9 @@ export default async function BottlePage({
             Fife Chamber Award 2026
           </p>
 
-          <h1 className="text-6xl md:text-8xl leading-none text-[#d4a63c] mb-10">
-            Innovation &
-            <br />
-            Digitalisation
+          <h1 className="text-6xl md:text-8xl leading-none font-light text-[#d4a63c]">
+            Digital Innovation<br />
+            & Technology
           </h1>
 
           <div className="w-28 h-px bg-[#5a4835] mx-auto mb-10" />
