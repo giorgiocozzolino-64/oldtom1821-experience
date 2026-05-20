@@ -7,6 +7,9 @@ import { getBottle, bottles } from "@/app/lib/bottles"
 import ClaimForm from "@/components/ClaimForm"
 import TransferOwnershipForm from "@/components/TransferOwnershipForm"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -37,10 +40,9 @@ export default async function BottlePage({
     .from("elyas_bottle_claims")
     .select("*")
     .eq("serial", serial)
-    .order("claimed_at", { ascending: false })
     .limit(1)
 
-  const currentClaim = claims?.[0]
+  const currentClaim = claims?.[0] || null
 
   const { data: custodyHistory } = await supabase
     .from("ownership_history")
@@ -51,8 +53,6 @@ export default async function BottlePage({
   return (
     <main className="min-h-screen bg-black text-[#d6d0c7]">
       <div className="max-w-5xl mx-auto px-6 py-16">
-        {/* HERO */}
-
         <section className="border border-[#3a3126] px-10 py-20 text-center">
           <p className="text-[#c6a47a] tracking-[0.45em] uppercase text-sm mb-8">
             Fife Chamber Award 2026
@@ -87,8 +87,6 @@ export default async function BottlePage({
           </div>
         </section>
 
-        {/* DATES */}
-
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16">
           <div className="border border-[#3a3126] p-6">
             <p className="text-[#c6a47a] text-xs tracking-[0.35em] uppercase mb-4">
@@ -111,8 +109,6 @@ export default async function BottlePage({
             <p className="text-[#e7d7bd] text-3xl">21 May 2026</p>
           </div>
         </section>
-
-        {/* CRAFT COMPOSITION */}
 
         <section className="border border-[#3a3126] bg-black/40 px-8 py-10 mt-12">
           <p className="text-[#c6a47a] text-xs tracking-[0.35em] uppercase mb-6 text-center">
@@ -144,14 +140,11 @@ export default async function BottlePage({
 
           <div className="mt-8 text-center text-[#d6d0c7] leading-relaxed">
             <p>Old Tom Gin 1821 · Vermouth · Bitter</p>
-
             <p className="mt-4 text-[#a8957a] italic">
               Part of the inaugural serialized collector release.
             </p>
           </div>
         </section>
-
-        {/* PROVENANCE JOURNEY */}
 
         <section className="border border-[#3a3126] mt-16 p-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
@@ -177,31 +170,22 @@ export default async function BottlePage({
               <div className="space-y-8 text-[#d6d0c7] text-xl leading-relaxed">
                 <p>
                   This limited edition bottle belongs to a fully serialized
-                  collector release created for the Fife Chamber Awards
-                  reception.
+                  collector release created for the Fife Chamber Awards reception.
                 </p>
 
                 <p>
-                  The liquid inside is an ex-bourbon cask aged Negroni
-                  connected to the Old Tom Gin 1821 family in St Andrews.
+                  The liquid inside is an ex-bourbon cask aged Negroni connected
+                  to the Old Tom Gin 1821 family in St Andrews.
                 </p>
 
                 <p>
-                  The cocktail follows the classic Italian equal-parts
-                  structure: gin, bitter aperitivo and sweet vermouth.
-                </p>
-
-                <p>
-                  The Negroni was born in Florence around 1919 when Count
-                  Camillo Negroni requested a stronger variation of the
-                  Americano cocktail.
+                  The cocktail follows the classic Italian equal-parts structure:
+                  gin, bitter aperitivo and sweet vermouth.
                 </p>
               </div>
             </div>
           </div>
         </section>
-
-        {/* QR */}
 
         <section className="border border-[#3a3126] mt-16 py-16 text-center">
           <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-10">
@@ -220,8 +204,6 @@ export default async function BottlePage({
             Scan To Verify Serialized Passport
           </p>
         </section>
-
-        {/* TIMELINE */}
 
         <section className="border border-[#3a3126] mt-16 p-12">
           <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-12 text-center">
@@ -270,15 +252,27 @@ export default async function BottlePage({
           </div>
         </section>
 
-        {/* CLAIM */}
-
         {!currentClaim && (
           <div className="mt-16">
             <ClaimForm serial={bottle.serial} />
           </div>
         )}
 
-        {/* TRANSFER OWNERSHIP */}
+        {currentClaim && (
+          <section className="border border-[#3a3126] mt-16 p-10 text-center">
+            <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-8">
+              Collector Certificate
+            </p>
+
+            <a
+              href={`/api/certificate/${bottle.serial}`}
+              target="_blank"
+              className="inline-block border border-[#d4a63c] px-10 py-4 text-[#d4a63c] tracking-[0.3em] uppercase text-sm hover:bg-[#d4a63c] hover:text-black transition-all"
+            >
+              Download Certificate
+            </a>
+          </section>
+        )}
 
         <section className="border border-[#3a3126] mt-16 p-10">
           <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-8 text-center">
