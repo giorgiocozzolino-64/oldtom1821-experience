@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 
 import { getBottle, bottles } from "@/app/lib/bottles"
+
 import ClaimForm from "@/components/ClaimForm"
 import TransferOwnershipForm from "@/components/TransferOwnershipForm"
 
@@ -23,182 +24,278 @@ export default async function BottlePage({
   params: Promise<{ serial: string }>
 }) {
   const { serial } = await params
+
   const bottle = getBottle(serial)
 
-  if (!bottle) notFound()
+  if (!bottle) {
+    notFound()
+  }
+
+  const bottleNumber = Number(serial.split("-").pop())
+
+  const { data: claims } = await supabase
+    .from("elyas_bottle_claims")
+    .select("*")
+    .eq("serial", serial)
+    .order("claimed_at", { ascending: false })
+    .limit(1)
+
+  const currentClaim = claims?.[0]
 
   const { data: custodyHistory } = await supabase
-    .from("custody_transfers")
+    .from("ownership_history")
     .select("*")
     .eq("serial", serial)
     .order("created_at", { ascending: true })
 
-  const { data: currentClaim } = await supabase
-    .from("elyas_bottle_claims")
-    .select("*")
-    .eq("serial", serial)
-    .maybeSingle()
-
   return (
-    <main className="min-h-screen bg-black text-[#D4A437] px-6 py-10 md:px-10">
-      <div className="max-w-5xl mx-auto border border-[#D4A437]/40 p-8 md:p-14 bg-black">
-        <div className="text-center">
-          <p className="tracking-[0.4em] text-sm md:text-base text-[#D4A437]/70 mb-8">
-            FIFE CHAMBER AWARD 2026
+    <main className="min-h-screen bg-black text-[#d6d0c7]">
+      <div className="max-w-5xl mx-auto px-6 py-16">
+        {/* HERO */}
+
+        <section className="border border-[#3a3126] px-10 py-20 text-center">
+          <p className="text-[#c6a47a] tracking-[0.45em] uppercase text-sm mb-8">
+            Fife Chamber Award 2026
           </p>
 
-          <h1 className="text-6xl md:text-8xl leading-none font-serif text-[#D4A437]">
-            INNOVATION & <br />
-            DIGITALISATION
+          <h1 className="text-6xl md:text-8xl leading-none text-[#d4a63c] mb-10">
+            Innovation &
+            <br />
+            Digitalisation
           </h1>
 
-          <div className="w-32 h-px bg-[#D4A437]/50 mx-auto my-12" />
+          <div className="w-28 h-px bg-[#5a4835] mx-auto mb-10" />
 
-          <p className="tracking-[0.35em] text-sm text-[#D4A437]/70 mb-6">
-            YOU HAVE UNLOCKED
+          <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-6">
+            You Have Unlocked
           </p>
 
-          <h2 className="text-5xl md:text-7xl font-serif leading-tight">
-            {bottle.product}
+          <h2 className="text-5xl md:text-6xl text-[#d4a63c] leading-tight">
+            Ex-Bourbon Cask Aged
+            <br />
+            Negroni
           </h2>
 
-          <h3 className="mt-10 text-5xl md:text-7xl font-bold tracking-tight">
-            BOTTLE {bottle.bottleNumber}
-          </h3>
-
-          <p className="mt-6 tracking-[0.3em] text-[#D4A437]/70">
-            {bottle.serial}
-          </p>
-        </div>
-
-        <section className="grid md:grid-cols-3 gap-4 mt-16">
-          <div className="border border-[#D4A437]/30 p-5">
-            <p className="text-xs tracking-[0.25em] text-[#D4A437]/70">
-              CASK ENTRY
+          <div className="mt-12">
+            <p className="text-5xl md:text-6xl text-[#d4a63c] font-semibold">
+              Bottle {bottleNumber} Of 60
             </p>
-            <p className="mt-4 text-2xl font-serif">{bottle.caskEntry}</p>
-          </div>
 
-          <div className="border border-[#D4A437]/30 p-5">
-            <p className="text-xs tracking-[0.25em] text-[#D4A437]/70">
-              MATURATION
+            <p className="mt-5 text-[#c6a47a] tracking-[0.35em] uppercase text-sm">
+              {bottle.serial}
             </p>
-            <p className="mt-4 text-2xl font-serif">{bottle.maturation}</p>
-          </div>
-
-          <div className="border border-[#D4A437]/30 p-5">
-            <p className="text-xs tracking-[0.25em] text-[#D4A437]/70">
-              RELEASE
-            </p>
-            <p className="mt-4 text-2xl font-serif">{bottle.releaseDate}</p>
           </div>
         </section>
 
-        <section className="mt-14 border border-[#D4A437]/30 p-8 md:p-10">
-          <div className="grid md:grid-cols-2 gap-10 items-start">
-            <div className="border border-[#D4A437]/20 p-4 flex justify-center">
+        {/* DATES */}
+
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16">
+          <div className="border border-[#3a3126] p-6">
+            <p className="text-[#c6a47a] text-xs tracking-[0.35em] uppercase mb-4">
+              Cask Entry
+            </p>
+            <p className="text-[#e7d7bd] text-3xl">30 September 2022</p>
+          </div>
+
+          <div className="border border-[#3a3126] p-6">
+            <p className="text-[#c6a47a] text-xs tracking-[0.35em] uppercase mb-4">
+              Maturation
+            </p>
+            <p className="text-[#e7d7bd] text-3xl">30 January 2026</p>
+          </div>
+
+          <div className="border border-[#3a3126] p-6">
+            <p className="text-[#c6a47a] text-xs tracking-[0.35em] uppercase mb-4">
+              Release
+            </p>
+            <p className="text-[#e7d7bd] text-3xl">21 May 2026</p>
+          </div>
+        </section>
+
+        {/* CRAFT COMPOSITION */}
+
+        <section className="border border-[#3a3126] bg-black/40 px-8 py-10 mt-12">
+          <p className="text-[#c6a47a] text-xs tracking-[0.35em] uppercase mb-6 text-center">
+            Craft Composition
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div className="border border-[#3a3126] p-6">
+              <p className="text-[#8e7c63] text-xs tracking-[0.25em] uppercase mb-3">
+                Formula
+              </p>
+              <p className="text-[#e7d7bd] text-xl">Equal Parts</p>
+            </div>
+
+            <div className="border border-[#3a3126] p-6">
+              <p className="text-[#8e7c63] text-xs tracking-[0.25em] uppercase mb-3">
+                Alcohol
+              </p>
+              <p className="text-[#e7d7bd] text-xl">24% ABV</p>
+            </div>
+
+            <div className="border border-[#3a3126] p-6">
+              <p className="text-[#8e7c63] text-xs tracking-[0.25em] uppercase mb-3">
+                Volume
+              </p>
+              <p className="text-[#e7d7bd] text-xl">100 mL</p>
+            </div>
+          </div>
+
+          <div className="mt-8 text-center text-[#d6d0c7] leading-relaxed">
+            <p>Old Tom Gin 1821 · Vermouth · Bitter</p>
+
+            <p className="mt-4 text-[#a8957a] italic">
+              Part of the inaugural serialized collector release.
+            </p>
+          </div>
+        </section>
+
+        {/* PROVENANCE JOURNEY */}
+
+        <section className="border border-[#3a3126] mt-16 p-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+            <div className="border border-[#3a3126] p-8">
               <Image
                 src={bottle.image}
-                alt={bottle.product}
-                width={500}
-                height={700}
-                className="object-contain"
-                priority
+                alt={bottle.serial}
+                width={700}
+                height={900}
+                className="w-full h-auto"
               />
             </div>
 
             <div>
-              <h3 className="text-5xl font-serif leading-none">
-                Provenance <br />
+              <h2 className="text-6xl text-[#d4a63c] leading-none mb-8">
+                Provenance
+                <br />
                 Journey
-              </h3>
+              </h2>
 
-              <div className="w-24 h-px bg-[#D4A437]/50 my-8" />
+              <div className="w-24 h-px bg-[#5a4835] mb-10" />
 
-              <div className="space-y-8 text-lg leading-relaxed text-[#D4A437]/90 whitespace-pre-line">
-                {bottle.story}
+              <div className="space-y-8 text-[#d6d0c7] text-xl leading-relaxed">
+                <p>
+                  This limited edition bottle belongs to a fully serialized
+                  collector release created for the Fife Chamber Awards
+                  reception.
+                </p>
+
+                <p>
+                  The liquid inside is an ex-bourbon cask aged Negroni
+                  connected to the Old Tom Gin 1821 family in St Andrews.
+                </p>
+
+                <p>
+                  The cocktail follows the classic Italian equal-parts
+                  structure: gin, bitter aperitivo and sweet vermouth.
+                </p>
+
+                <p>
+                  The Negroni was born in Florence around 1919 when Count
+                  Camillo Negroni requested a stronger variation of the
+                  Americano cocktail.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mt-14 border border-[#D4A437]/30 p-10 text-center">
-          <p className="tracking-[0.3em] text-sm text-[#D4A437]/70">
-            DIGITAL AUTHENTICATION
+        {/* QR */}
+
+        <section className="border border-[#3a3126] mt-16 py-16 text-center">
+          <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-10">
+            Digital Authentication
           </p>
 
-          <div className="flex justify-center mt-8">
-            <Image
-              src={`/qr/${bottle.serial}.png`}
-              alt={`QR ${bottle.serial}`}
-              width={220}
-              height={220}
-              className="border border-[#D4A437]/20 p-2 bg-black"
-            />
-          </div>
+          <Image
+            src={`/qr/${bottle.serial}.png`}
+            alt="QR Code"
+            width={200}
+            height={200}
+            className="mx-auto border border-[#3a3126] p-4"
+          />
 
-          <p className="mt-6 text-[#D4A437]/60 tracking-[0.2em] text-sm">
-            SCAN TO VERIFY SERIALIZED PASSPORT
+          <p className="mt-10 text-[#c6a47a] tracking-[0.25em] uppercase text-sm">
+            Scan To Verify Serialized Passport
           </p>
         </section>
 
-        <section className="mt-14 border border-[#D4A437]/30 p-10">
-          <p className="tracking-[0.3em] text-sm text-[#D4A437]/70 text-center mb-10">
-            PROVENANCE TIMELINE
+        {/* TIMELINE */}
+
+        <section className="border border-[#3a3126] mt-16 p-12">
+          <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-12 text-center">
+            Provenance Timeline
           </p>
 
-          <div className="space-y-8 max-w-2xl mx-auto">
+          <div className="space-y-12">
             <div>
-              <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
-                30 SEPTEMBER 2022
+              <p className="text-[#8e7c63] tracking-[0.3em] uppercase text-xs mb-3">
+                30 September 2022
               </p>
-              <p className="text-2xl font-serif mt-2">Cask Filled</p>
+              <h3 className="text-[#d4a63c] text-4xl">Cask Filled</h3>
             </div>
 
             <div>
-              <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
-                30 JANUARY 2026
+              <p className="text-[#8e7c63] tracking-[0.3em] uppercase text-xs mb-3">
+                30 January 2026
               </p>
-              <p className="text-2xl font-serif mt-2">Maturation Completed</p>
+              <h3 className="text-[#d4a63c] text-4xl">
+                Maturation Completed
+              </h3>
             </div>
 
             <div>
-              <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
-                21 MAY 2026
+              <p className="text-[#8e7c63] tracking-[0.3em] uppercase text-xs mb-3">
+                21 May 2026
               </p>
-              <p className="text-2xl font-serif mt-2">
+              <h3 className="text-[#d4a63c] text-4xl">
                 Released for Fife Chamber Awards
-              </p>
+              </h3>
             </div>
 
             {custodyHistory?.map((event) => (
               <div key={event.id}>
-                <p className="text-[#D4A437]/50 text-sm tracking-[0.2em]">
-                  {new Date(event.created_at).toLocaleString("en-GB")}
+                <p className="text-[#8e7c63] tracking-[0.3em] uppercase text-xs mb-3">
+                  {new Date(event.created_at).toLocaleString()}
                 </p>
 
-                <p className="text-2xl font-serif mt-2">
-                  {event.transfer_type === "ownership_claim"
-                    ? `Claimed by ${event.to_party}`
-                    : `Transferred from ${event.from_party} to ${event.to_party}`}
-                </p>
+                <h3 className="text-[#d4a63c] text-3xl">
+                  {event.event_type}
+                </h3>
 
-                <p className="text-[#D4A437]/60 mt-1">
-                  {event.from_role} → {event.to_role}
-                </p>
+                <p className="text-[#d6d0c7] mt-3">{event.owner_name}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <ClaimForm serial={bottle.serial} />
+        {/* CLAIM */}
 
-        {currentClaim && (
-          <TransferOwnershipForm
-            serial={bottle.serial}
-            ownerEmail={currentClaim.email}
-          />
+        {!currentClaim && (
+          <div className="mt-16">
+            <ClaimForm serial={bottle.serial} />
+          </div>
         )}
+
+        {/* TRANSFER OWNERSHIP */}
+
+        <section className="border border-[#3a3126] mt-16 p-10">
+          <p className="text-[#c6a47a] tracking-[0.35em] uppercase text-sm mb-8 text-center">
+            Transfer Ownership
+          </p>
+
+          {currentClaim ? (
+            <TransferOwnershipForm
+              serial={bottle.serial}
+              ownerEmail={currentClaim.email}
+            />
+          ) : (
+            <p className="text-[#8e7c63] text-center">
+              Ownership transfer becomes available after collector registration.
+            </p>
+          )}
+        </section>
       </div>
     </main>
   )
